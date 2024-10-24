@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ShujiDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.shuji_name as shujiName
+        ,a.shuji_uuid_number as shujiUuidNumber
+        ,a.shuji_photo as shujiPhoto
+        ,a.shuji_types as shujiTypes
+        ,a.shuji_erji_types as shujiErjiTypes
+        ,a.shuji_clicknum as shujiClicknum
+        ,a.shuji_content as shujiContent
+        ,a.shangxia_types as shangxiaTypes
+        ,a.shuji_delete as shujiDelete
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ShujiView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+
+        FROM shuji  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.shujiName != '' and params.shujiName != null and params.shujiName != 'null' ">
+                and a.shuji_name like CONCAT('%',#{params.shujiName},'%')
+            </if>
+            <if test=" params.shujiUuidNumber != '' and params.shujiUuidNumber != null and params.shujiUuidNumber != 'null' ">
+                and a.shuji_uuid_number like CONCAT('%',#{params.shujiUuidNumber},'%')
+            </if>
+            <if test="params.shujiTypes != null and params.shujiTypes != ''">
+                and a.shuji_types = #{params.shujiTypes}
+            </if>
+            <if test="params.shujiErjiTypes != null and params.shujiErjiTypes != ''">
+                and a.shuji_erji_types = #{params.shujiErjiTypes}
+            </if>
+            <if test="params.shujiClicknumStart != null and params.shujiClicknumStart != ''">
+                <![CDATA[  and a.shuji_clicknum >= #{params.shujiClicknumStart}   ]]>
+            </if>
+            <if test="params.shujiClicknumEnd != null and params.shujiClicknumEnd != ''">
+                <![CDATA[  and a.shuji_clicknum <= #{params.shujiClicknumEnd}   ]]>
+            </if>
+             <if test="params.shujiClicknum != null and params.shujiClicknum != ''">
+                and a.shuji_clicknum = #{params.shujiClicknum}
+             </if>
+            <if test=" params.shujiContent != '' and params.shujiContent != null and params.shujiContent != 'null' ">
+                and a.shuji_content like CONCAT('%',#{params.shujiContent},'%')
+            </if>
+            <if test="params.shangxiaTypes != null and params.shangxiaTypes != ''">
+                and a.shangxia_types = #{params.shangxiaTypes}
+            </if>
+            <if test="params.shujiDeleteStart != null and params.shujiDeleteStart != ''">
+                <![CDATA[  and a.shuji_delete >= #{params.shujiDeleteStart}   ]]>
+            </if>
+            <if test="params.shujiDeleteEnd != null and params.shujiDeleteEnd != ''">
+                <![CDATA[  and a.shuji_delete <= #{params.shujiDeleteEnd}   ]]>
+            </if>
+             <if test="params.shujiDelete != null and params.shujiDelete != ''">
+                and a.shuji_delete = #{params.shujiDelete}
+             </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test="params.insertTime != null and params.insertTime != ''">
+                and a.insert_time = #{params.insertTime}
+            </if>
+
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>
